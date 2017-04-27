@@ -3,45 +3,30 @@
  */
 import java.util.Date;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
-    }
-
     public String getTime() {
       Date d = new Date();
       return "[" + d.toLocaleString() + "]: ";
     }
 
-    public void startTestServer() {
-      Vertx.vertx()
-      .createHttpServer()
-      .requestHandler(req -> req.response().end("Hello World!"))
-      .listen(8080, handler -> {
-        if (handler.succeeded()) {
-          System.out.println(getTime() + "http://localhost:8080/");
-        } else {
-          System.err.println(getTime() + "Failed to listen on port 8080");
-        }
-      });
-    }
-
     public void startServer() {
       Vertx.vertx()
       .createHttpServer()
-      .requestHandler(req -> req.response().end(getResponse()))
+      .requestHandler(req -> req.response().putHeader("Content-Type", "application/json").end(getJSON()))
       .listen(8080, handler -> {
         if (handler.succeeded()) {
-          System.out.println(getTime() + "http://localhost:8080/");
+          System.out.println(getTime() + "Server running on http://localhost:8080/");
         } else {
           System.err.println(getTime() + "Failed to listen on port 8080");
         }
       });
     }
 
-    public String getResponse() {
-      return "Hello World!";
+    public String getJSON() {
+      Service ser = new Service("Google SE", "https://www.google.se/");
+      return ser.toJSON().toString();  // toString because unable to make JsonObject buffer
     }
 
     public static void main(String[] args) {
