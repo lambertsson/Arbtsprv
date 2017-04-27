@@ -27,7 +27,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // The added Vertx dependency for web services
+    compile 'io.vertx:vertx-core:3.4.1'
     compile 'io.vertx:vertx-web:3.4.1'
+    compile 'io.vertx:vertx-web-client:3.4.1'
 }
 
 // Define the main class for the application

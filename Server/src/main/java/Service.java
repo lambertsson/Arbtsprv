@@ -38,6 +38,12 @@ public class Service {
     return url;
   }
 
+  // Returns the host as a String.
+  // Example: URL: http://www.google.se, HOST: google.se
+  public String getHost(){
+    return url.substring((url.indexOf("://") + 3));
+  }
+
   // Returns the status as a String. "OK" if true, "FAIL" if false;
   public String getStatus(){
     if(status)
@@ -53,7 +59,7 @@ public class Service {
 
   // Returns the lastCheck as a String.
   public String getLastCheckAsString(){
-    return lastCheck.toString();
+    return lastCheck.toString();  //TODO: Does not match format defined in pdf
   }
 
   // Sets the lastCheck to date parameter.
