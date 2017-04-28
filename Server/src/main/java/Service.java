@@ -1,12 +1,14 @@
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 import io.vertx.core.json.JsonObject;
 
 public class Service {
+  private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
   private UUID id;
-  private String name, url;
+  private String name, url, lastCheck;
   private boolean status;
-  private Date lastCheck;
 
   // Creates a new Service with name and url. ID is randomized, status set to FAIL
   // and lastCheck to the current time.
@@ -15,7 +17,15 @@ public class Service {
     this.name = name;
     this.url = url;
     this.status = false;
-    this.lastCheck = new Date();
+    this.lastCheck = df.format(new Date());
+  }
+
+  public Service(String id, String name, String url, String status, String lastCheck){
+    this.id = UUID.fromString(id);
+    this.name = name;
+    this.url = url;
+    this.status = (status.equals("OK")) ? true : false;
+    this.lastCheck = lastCheck;
   }
 
   // Returns the UUID from Service.
@@ -52,24 +62,19 @@ public class Service {
       return "FAIL";
   }
 
-  // Returns the lastCheck as a Date.
-  public Date getLastCheck(){
+  // Returns the lastCheck as a String.
+  public String getLastCheck(){
     return lastCheck;
   }
 
-  // Returns the lastCheck as a String.
-  public String getLastCheckAsString(){
-    return lastCheck.toString();  //TODO: Does not match format defined in pdf
-  }
-
-  // Sets the lastCheck to date parameter.
-  public void setChecked(Date date){
+  // Sets the lastCheck to provded date String.
+  public void setChecked(String date){
     this.lastCheck = date;
   }
 
   // Sets the lastCheck to current date and time.
   public void setCheckedNow(){
-    this.lastCheck = new Date();
+    this.lastCheck = df.format(new Date());
   }
 
   // Sets the status to value of status parameter.
@@ -84,7 +89,7 @@ public class Service {
     json.put("name", name);
     json.put("url", url);
     json.put("status", getStatus());
-    json.put("lastCheck", getLastCheckAsString());
+    json.put("lastCheck", getLastCheck());
     return json;
   }
 }
