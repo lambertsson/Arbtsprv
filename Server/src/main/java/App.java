@@ -97,21 +97,70 @@ public class App {
 
     // Starts the server that listens to requests and periodically checks the
     // status of services.
-    public void startServer() {
+    public void start() {
       readServicesFromFile();
-      System.out.println(getTime() + "Starting server...");
-      Vertx.vertx()
-      .createHttpServer()
-      .requestHandler(req -> req.response().putHeader("Content-Type", "application/json").end(getJSONAsString()))
-      .listen(8080, handler -> {
-        if (handler.succeeded()) {
-          System.out.println(getTime() + "Server running on http://localhost:8080/");
-        } else {
-          System.err.println(getTime() + "Failed to listen on port 8080");
-        }
-      });
+      startServer();
+      startClient();
+    }
 
+    public void startServer(){
+      Vertx serverVertx = Vertx.vertx();
+      System.out.println(getTime() + "Starting server...");
+      io.vertx.core.http.HttpServer server = serverVertx.createHttpServer();
+      // server
+      // .requestHandler(req -> req.response().putHeader("Content-Type", "application/json").end(getJSONAsString()))
+      // .listen(8080, handler -> {
+      //   if (handler.succeeded()) {
+      //     System.out.println(getTime() + "Server running on http://localhost:8080/");
+      //   } else {
+      //     System.err.println(getTime() + "Failed to listen on port 8080");
+      //   }
+      // });
+
+      io.vertx.ext.web.Router router = io.vertx.ext.web.Router.router(serverVertx);
+
+      router.route().handler(io.vertx.ext.web.handler.BodyHandler.create());
+      router.get("/service").handler(this::handleGetService);
+      router.post("/service").handler(this::handleAddService);
+      //router.delete("/service/:service_id").handler(this::handleDeleteService); //TODO: Regex
+
+      serverVertx.createHttpServer().requestHandler(router::accept).listen(8080);
+    }
+
+    public void handleGetService(io.vertx.ext.web.RoutingContext routingContext){
+      routingContext.response().putHeader("content-type", "application/json").end(getJSONAsString());
+    }
+
+    public void handleAddService(io.vertx.ext.web.RoutingContext routingContext){
+      io.vertx.core.http.HttpServerResponse response = routingContext.response();
+      JsonObject service = routingContext.getBodyAsJson();
+      if (service == null) {
+        //Something went wrong...
+      } else {
+        services.add(new Service(service.getString("name"), service.getString("url")));
+        response.end();
+      }
+    }
+
+    public void handleDeleteService(io.vertx.ext.web.RoutingContext routingContext){
+      String serviceID = routingContext.request().uri();
+      System.out.println(serviceID);
+      // io.vertx.core.http.HttpServerResponse response = routingContext.response();
+      // if (serviceID == null) {
+      //   //Something went wrong...
+      // } else {
+      //   for(int i = 0; i < services.size(); i++){
+      //     if(services.get(i).getIDAsString().equals(serviceID)){
+      //       System.out.println(getTime() + "Found and removed: " + serviceID);
+      //       services.remove(i);
+      //     }
+      //   }
+      // }
+    }
+
+    public void startClient(){
       Vertx clientVertx = Vertx.vertx();
+      System.out.println(getTime() + "Starting client...");
       io.vertx.ext.web.client.WebClient client = io.vertx.ext.web.client.WebClient.create(clientVertx);
       clientVertx.setPeriodic(8000, id -> {  // 60,000 ms is 1 minute, do this every minute... //TODO: Change back timer to 60,000
         writeServicesToFile();  // Write before checking, since the checks are done async. //TODO: Should be a better way.
@@ -125,6 +174,6 @@ public class App {
     public static void main(String[] args) {
         App app = new App();
         //app.setExampleData();
-        app.startServer();
+        app.start();
     }
 }
