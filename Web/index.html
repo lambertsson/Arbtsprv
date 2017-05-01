@@ -14,6 +14,7 @@
 </head>
 
 <body>
+
   <div class="row">
     <div class="col-sm-4">
       <ul id="serviceList" class="list-group">
@@ -21,58 +22,80 @@
     </div>
   </div>
 
+  <div class="row">
+    <div class="col-sm-4">
+      <form id="addForm" class="form-inline" style="padding-left: 16px" onsubmit="addService()">
+        <label for="nameInput" class="sr-only">Name</label>
+        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="nameInput" name="name" placeholder="Kry">
+        <label for="urlInput" class="sr-only">URL</label>
+        <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="urlInput" name="url" placeholder="http://kry.se">
+        <button type="submit" class="btn btn-primary">Add Service</button>
+      </form>
+    </div>
+  </div>
+
+
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="js/bootstrap.min.js"></script>
   <script>
-  $(document).ready(function () {
-    $.getJSON('http://localhost:8080/service', function(data) {
-      var ul = document.getElementById("serviceList");
-      for (var i = 0; i < data.services.length; i++) {
-        var service = data[i];
-        var li = document.createElement("li");
-        li.classList.add("list-group-item");
+    function addService() {
+      var name = document.getElementById("nameInput").value
+      var url = document.getElementById("urlInput").value
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'http://localhost:8080/service', true);
+      xhr.send("{\"name\": \"" + name + "\", \"url\": \"" + url + "\"}");
+    }
 
-        var id = data.services[i].id
-        var name = data.services[i].name
-        var url = data.services[i].url
-        var status = data.services[i].status
-        var lastCheck = data.services[i].lastCheck
-        var br = document.createElement("br")
 
-        // STATUS AND NAME
-        var div = document.createElement('div');
-        div.classList.add("serviceName")
-        var span = document.createElement('span')
-        span.classList.add("label")
-        if(status == "OK"){
-          span.classList.add("label-success")
-          span.appendChild(document.createTextNode("OK"))
-        }else{
-          span.classList.add("label-danger")
-          span.appendChild(document.createTextNode("FAIL"))
+    $(document).ready(function() {
+      $.getJSON('http://localhost:8080/service', function(data) {
+        var ul = document.getElementById("serviceList");
+        for (var i = 0; i < data.services.length; i++) {
+          var service = data[i];
+          var li = document.createElement("li");
+          li.classList.add("list-group-item");
+
+          var id = data.services[i].id
+          var name = data.services[i].name
+          var url = data.services[i].url
+          var status = data.services[i].status
+          var lastCheck = data.services[i].lastCheck
+          var br = document.createElement("br")
+
+          // STATUS AND NAME
+          var div = document.createElement('div');
+          div.classList.add("serviceName")
+          var span = document.createElement('span')
+          span.classList.add("label")
+          if (status == "OK") {
+            span.classList.add("label-success")
+            span.appendChild(document.createTextNode("OK"))
+          } else {
+            span.classList.add("label-danger")
+            span.appendChild(document.createTextNode("FAIL"))
+          }
+          div.appendChild(span)
+          div.appendChild(document.createTextNode(" " + name))
+          li.appendChild(div)
+
+          // URL
+          var div2 = document.createElement('div');
+          div2.classList.add("serviceURL")
+          div2.appendChild(document.createTextNode(url))
+          li.appendChild(div2)
+
+          // LAST CHECK
+          var div3 = document.createElement('div');
+          div3.classList.add("serviceLastCheck")
+          div3.appendChild(document.createTextNode(lastCheck))
+          li.appendChild(div3)
+
+          ul.appendChild(li);
         }
-        div.appendChild(span)
-        div.appendChild(document.createTextNode(" " + name))
-        li.appendChild(div)
-
-        // URL
-        var div2 = document.createElement('div');
-        div2.classList.add("serviceURL")
-        div2.appendChild(document.createTextNode(url))
-        li.appendChild(div2)
-
-        // LAST CHECK
-        var div3 = document.createElement('div');
-        div3.classList.add("serviceLastCheck")
-        div3.appendChild(document.createTextNode(lastCheck))
-        li.appendChild(div3)
-
-        ul.appendChild(li);
-      }
+      });
     });
-});
   </script>
 </body>
 
