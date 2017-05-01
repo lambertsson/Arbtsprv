@@ -117,11 +117,11 @@ public void startServer(){
         io.vertx.ext.web.Router router = io.vertx.ext.web.Router.router(serverVertx);
 
         router.route().handler(io.vertx.ext.web.handler.BodyHandler.create());
-        router.get("/service").handler(this : : handleGetService);
-        router.post("/service").handler(this : : handleAddService);
+        router.get("/service").handler(this::handleGetService);
+        router.post("/service").handler(this::handleAddService);
         //router.delete("/service/:service_id").handler(this::handleDeleteService); //TODO: Regex
 
-        serverVertx.createHttpServer().requestHandler(router: : accept).listen(8080);
+        serverVertx.createHttpServer().requestHandler(router::accept).listen(8080);
 }
 
 /*
