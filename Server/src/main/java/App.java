@@ -9,7 +9,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.core.json.JsonArray;
 
 public class App {
-static int statusTimer = 8000;      // 60,000 ms is 1 minute, do this every minute... //TODO: Change back timer to 60,000
+static int statusTimer = 60000;      // 60,000 ms is 1 minute, do this every minute...
 ArrayList<Service> services = new ArrayList<Service>();     // TODO: Do I need this, or should I keep it as a JsonArray since it's available?
 
 /*
@@ -116,6 +116,7 @@ public void startServer(){
         io.vertx.core.http.HttpServer server = serverVertx.createHttpServer();
         io.vertx.ext.web.Router router = io.vertx.ext.web.Router.router(serverVertx);
 
+        router.route().handler(io.vertx.ext.web.handler.CorsHandler.create("*").allowedMethod(io.vertx.core.http.HttpMethod.GET));  //TODO: Should probably not allow everyone.
         router.route().handler(io.vertx.ext.web.handler.BodyHandler.create());
         router.get("/service").handler(this::handleGetService);
         router.post("/service").handler(this::handleAddService);

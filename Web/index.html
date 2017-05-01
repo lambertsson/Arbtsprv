@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>Arbetsprov</title>
+
+  <!-- Bootstrap -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="row">
+    <div class="col-sm-4">
+      <ul id="serviceList" class="list-group">
+      </ul>
+    </div>
+  </div>
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="js/bootstrap.min.js"></script>
+  <script>
+  $(document).ready(function () {
+    $.getJSON('http://localhost:8080/service', function(data) {
+      var ul = document.getElementById("serviceList");
+      for (var i = 0; i < data.services.length; i++) {
+        var service = data[i];
+        var li = document.createElement("li");
+        li.classList.add("list-group-item");
+
+        var id = data.services[i].id
+        var name = data.services[i].name
+        var url = data.services[i].url
+        var status = data.services[i].status
+        var lastCheck = data.services[i].lastCheck
+        var br = document.createElement("br")
+
+        // STATUS AND NAME
+        var div = document.createElement('div');
+        div.classList.add("serviceName")
+        var span = document.createElement('span')
+        span.classList.add("label")
+        if(status == "OK"){
+          span.classList.add("label-success")
+          span.appendChild(document.createTextNode("OK"))
+        }else{
+          span.classList.add("label-danger")
+          span.appendChild(document.createTextNode("FAIL"))
+        }
+        div.appendChild(span)
+        div.appendChild(document.createTextNode(" " + name))
+        li.appendChild(div)
+
+        // URL
+        var div2 = document.createElement('div');
+        div2.classList.add("serviceURL")
+        div2.appendChild(document.createTextNode(url))
+        li.appendChild(div2)
+
+        // LAST CHECK
+        var div3 = document.createElement('div');
+        div3.classList.add("serviceLastCheck")
+        div3.appendChild(document.createTextNode(lastCheck))
+        li.appendChild(div3)
+
+        ul.appendChild(li);
+      }
+    });
+});
+  </script>
+</body>
+
+</html>

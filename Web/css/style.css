@@ -1,0 +1,14 @@
+.serviceName{
+
+}
+
+.serviceURL{
+  padding-top: 6px;
+  font-size: 12px;
+  color: #8a8a8a;
+}
+
+.serviceLastCheck{
+  font-size: 10px;
+  color: #8a8a8a;
+}
